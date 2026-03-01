@@ -58,6 +58,7 @@ Use one of:
 
 ### 2) Start from the example policy scope
 - Open `examples/scope.openclaw.yaml`
+- For lower disruption during tuning, start with `examples/scope.low-disruption.yaml`
 - Narrow allowlists to only what your workload truly needs
 
 ### 3) Run the warden
@@ -126,3 +127,5 @@ Also see:
 - `CONTRIBUTING.md`
 - `SECURITY.md`
 - `PUBLISH_CHECKLIST.md`
+- Audit checklist: `docs/AUDIT_CHECKLIST.md`
+- Layered plan: `docs/IMPLEMENTATION_PLAN_LAYERED.md`
