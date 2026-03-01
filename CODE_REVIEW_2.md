@@ -24,7 +24,7 @@ I found one meaningful correctness issue and a few release-hardening gaps. I app
 ## P1 (important)
 
 ### 1) Forbidden command phrase matching was overly broad (fixed)
-- **Why it matters:** phrase rules used `startswith(...)` blindly, which can over-match and cause false-positive kills.
+- **Why it matters:** phrase rules used `startswith(...)` blindly, which can over-match and cause unintended kill risk.
 - **Example:** with a forbidden phrase `"rm -rf /"`, command `"rm -rf /tmp"` was previously treated as forbidden.
 - **Fix applied:**
   - Exact command handling for phrase entries.

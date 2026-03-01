@@ -21,7 +21,7 @@ Biggest launch blockers were packaging/installation hygiene and missing communit
 
 ## Prioritized findings
 
-## P0 (must fix before public release)
+## P0 (pre-release critical)
 
 ### 1) Missing `build-system` in `pyproject.toml` (fixed)
 - **Risk:** `pip install .` behavior can be inconsistent without explicit PEP 517 build backend.
@@ -82,7 +82,7 @@ Biggest launch blockers were packaging/installation hygiene and missing communit
 
 ## Release recommendation
 
-**Recommend proceeding with a tagged `0.1.x-alpha` OSS launch** after maintaining these guarantees:
+**Recommend proceeding with a tagged `0.1.x-alpha` OSS launch** after maintaining these rollout conditions:
 1. Keep enforcement default conservative (audit-first).
 2. Keep security caveats visible in README.
 3. Wire CI before broader adoption.
