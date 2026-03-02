@@ -41,6 +41,11 @@ dev = [
 suy-warden = "suy_sideguy.warden:entrypoint"
 suy-forensic-report = "suy_sideguy.forensic_report:main"
 
+[project.urls]
+Homepage = "https://github.com/roli-lpci/suy-sideguy"
+Repository = "https://github.com/roli-lpci/suy-sideguy"
+"Bug Tracker" = "https://github.com/roli-lpci/suy-sideguy/issues"
+
 [tool.setuptools]
 packages = ["suy_sideguy"]
 

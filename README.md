@@ -1,5 +1,10 @@
 # Suy Sideguy
 
+[![PyPI version](https://img.shields.io/pypi/v/suy-sideguy)](https://pypi.org/project/suy-sideguy/)
+[![Python versions](https://img.shields.io/pypi/pyversions/suy-sideguy)](https://pypi.org/project/suy-sideguy/)
+[![License](https://img.shields.io/github/license/roli-lpci/suy-sideguy)](https://github.com/roli-lpci/suy-sideguy/blob/main/LICENSE)
+[![CI](https://github.com/roli-lpci/suy-sideguy/actions/workflows/ci.yml/badge.svg)](https://github.com/roli-lpci/suy-sideguy/actions/workflows/ci.yml)
+
 Runtime safety guard for autonomous agents.
 
 Suy Sideguy watches a running agent process and decides whether actions should be **SAFE**, **FLAGGED**, or **KILLED** based on your policy.
