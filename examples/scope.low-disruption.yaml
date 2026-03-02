@@ -1,0 +1,88 @@
+agent:
+  name: "openclaw"
+  pid: null
+
+filesystem:
+  # NOTE: Paths below use macOS conventions (/Users/*/).
+  # On Linux, replace /Users/*/ with /home/*/ (e.g. /home/*/.openclaw/**).
+  allowed_paths:
+    - "/Users/*/.openclaw/**"
+    - "/Users/*/Desktop/Coding/**"
+    - "/Users/*/Documents/projects/**"
+    - "/tmp/openclaw_*/**"
+    - "/tmp/openclaw/**"
+  # On Linux, replace /Users/*/ with /home/*/.
+  forbidden_paths:
+    - "/Users/*/.ssh/**"
+    - "/Users/*/.gnupg/**"
+    - "/Users/*/.aws/**"
+    - "/Users/*/.config/gcloud/**"
+    - "/Users/*/.config/gh/**"
+  forbidden_extensions:
+    - ".pem"
+    - ".key"
+    - ".p12"
+    - ".keychain"
+    - ".keychain-db"
+
+network:
+  allowed_domains:
+    - "localhost"
+    - "127.0.0.1"
+    - "api.openai.com"
+    - "api.anthropic.com"
+    - "openrouter.ai"
+    - "api.github.com"
+    - "github.com"
+    - "registry.npmjs.org"
+    - "pypi.org"
+    - "files.pythonhosted.org"
+  forbidden_domains:
+    - "pastebin.com"
+    - "hastebin.com"
+    - "transfer.sh"
+    - "file.io"
+    - "0x0.st"
+  allowed_ports:
+    - 80
+    - 443
+    - 53
+    - 11434
+    - 18789
+
+process:
+  allowed_commands:
+    - "openclaw"
+    - "bash"
+    - "sh"
+    - "zsh"
+    - "python3"
+    - "python"
+    - "node"
+    - "npm"
+    - "npx"
+    - "git"
+    - "ls"
+    - "cat"
+    - "echo"
+    - "grep"
+    - "sed"
+    - "awk"
+    - "jq"
+    - "find"
+  forbidden_commands:
+    - "curl"
+    - "wget"
+    - "ssh"
+    - "scp"
+    - "rsync"
+    - "sudo"
+    - "pkill"
+    - "killall"
+    - "rm -rf /"
+
+behavior:
+  # Low-disruption profile: tolerate expected noise, escalate after accumulation.
+  flag_threshold: 12
+  flag_window: 300
+  max_actions_per_minute: 300
