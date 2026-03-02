@@ -9,7 +9,7 @@ description = "Runtime guardian for autonomous agents (OSS companion to Hermes W
 readme = "README.md"
 requires-python = ">=3.9"
 license = "Apache-2.0"
-authors = [{ name = "Rolando Bosch" }]
+authors = [{ name = "Hermes Labs", email = "lpcisystems@gmail.com" }]
 keywords = ["security", "ai-agent", "runtime-monitoring", "incident-response"]
 classifiers = [
   "Development Status :: 3 - Alpha",
