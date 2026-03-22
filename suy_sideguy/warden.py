@@ -291,60 +291,81 @@ Scope:
 {scope_context}
 {recent_summary}"""
 
-        try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
-                resp = await client.post(
-                    self.OLLAMA_URL,
-                    json={
-                        "model": self.model,
-                        "messages": [
-                            {"role": "system", "content": self.SYSTEM_PROMPT},
-                            {"role": "user", "content": user_prompt}
-                        ],
-                        "stream": False,
-                        "options": {
-                            "temperature": 0,
-                            "num_predict": 200
-                        },
-                        "format": {
-                            "type": "object",
-                            "properties": {
-                                "verdict": {
-                                    "type": "string",
-                                    "enum": ["SAFE", "FLAG", "KILL"]
-                                },
-                                "reason": {"type": "string"},
-                                "confidence": {"type": "number"}
+        max_retries = 2
+        for attempt in range(max_retries + 1):
+            try:
+                async with httpx.AsyncClient(timeout=45.0) as client:
+                    resp = await client.post(
+                        self.OLLAMA_URL,
+                        json={
+                            "model": self.model,
+                            "messages": [
+                                {"role": "system", "content": self.SYSTEM_PROMPT},
+                                {"role": "user", "content": user_prompt}
+                            ],
+                            "stream": False,
+                            "options": {
+                                "temperature": 0,
+                                "num_predict": 200
                             },
-                            "required": ["verdict", "reason", "confidence"]
+                            "format": {
+                                "type": "object",
+                                "properties": {
+                                    "verdict": {
+                                        "type": "string",
+                                        "enum": ["SAFE", "FLAG", "KILL"]
+                                    },
+                                    "reason": {"type": "string"},
+                                    "confidence": {"type": "number"}
+                                },
+                                "required": ["verdict", "reason", "confidence"]
+                            }
                         }
-                    }
-                )
-                
-                if resp.status_code != 200:
-                    return WardenVerdict(
-                        verdict=Verdict.FLAG,
-                        reason="LLM judge unavailable - failing closed",
-                        action=action, evaluator="llm_fallback"
                     )
-                
-                content = resp.json().get('message', {}).get('content', '{}')
-                parsed = json.loads(content)
-                verdict = Verdict[parsed.get('verdict', 'FLAG')]
-                
-                return WardenVerdict(
-                    verdict=verdict,
-                    reason=parsed.get('reason', 'No reason'),
-                    action=action, evaluator="llm_judge",
-                    confidence=parsed.get('confidence', 0.5)
-                )
                     
-        except Exception as e:
-            return WardenVerdict(
-                verdict=Verdict.FLAG,
-                reason=f"LLM error, failing closed: {e}",
-                action=action, evaluator="llm_fallback"
-            )
+                    if resp.status_code != 200:
+                        if attempt < max_retries:
+                            import asyncio
+                            await asyncio.sleep(1)
+                            continue
+                        return WardenVerdict(
+                            verdict=Verdict.FLAG,
+                            reason="LLM judge unavailable - failing closed",
+                            action=action, evaluator="llm_fallback"
+                        )
+                    
+                    content = resp.json().get('message', {}).get('content', '')
+                    if not content or not content.strip():
+                        if attempt < max_retries:
+                            import asyncio
+                            await asyncio.sleep(1)
+                            continue
+                        return WardenVerdict(
+                            verdict=Verdict.FLAG,
+                            reason="LLM returned empty response - failing closed",
+                            action=action, evaluator="llm_fallback"
+                        )
+                    
+                    parsed = json.loads(content)
+                    verdict = Verdict[parsed.get('verdict', 'FLAG')]
+                    
+                    return WardenVerdict(
+                        verdict=verdict,
+                        reason=parsed.get('reason', 'No reason'),
+                        action=action, evaluator="llm_judge",
+                        confidence=parsed.get('confidence', 0.5)
+                    )
+                        
+            except Exception as e:
+                if attempt < max_retries:
+                    import asyncio
+                    await asyncio.sleep(1)
+                    continue
+                return WardenVerdict(
+                    verdict=Verdict.FLAG,
+                    reason=f"LLM error, failing closed: {e}",
+                    action=action, evaluator="llm_fallback"
+                )
 
 
 # ════════════════════════════════════════════════════════════
