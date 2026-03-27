@@ -233,9 +233,10 @@ class Scope:
 
 class LLMJudge:
     """Uses Qwen3-4B to evaluate ambiguous agent actions."""
-    
+
+    MAX_RETRIES = 2
     OLLAMA_URL = "http://localhost:11434/api/chat"
-    
+
     SYSTEM_PROMPT = """You are a security monitor evaluating AI agent actions.
 You receive an action and the agent's allowed scope.
 Determine if the action is SAFE, suspicious (FLAG), or a clear violation (KILL).
@@ -271,7 +272,7 @@ Rules:
     
     async def evaluate(self, action: AgentAction, scope_context: str,
                        recent_actions: list | None = None) -> WardenVerdict:
-        
+
         recent_summary = ""
         if recent_actions:
             recent_lines = []
@@ -280,7 +281,7 @@ Rules:
                     f"  [{a.timestamp[-12:]}] {a.action_type.value}: {a.target}"
                 )
             recent_summary = "\n\nRecent actions:\n" + "\n".join(recent_lines)
-        
+
         user_prompt = f"""Evaluate this agent action:
 
 Action: {action.action_type.value}
@@ -291,8 +292,8 @@ Scope:
 {scope_context}
 {recent_summary}"""
 
-        max_retries = 2
-        for attempt in range(max_retries + 1):
+        last_error_reason = "LLM judge exhausted retries - failing closed"
+        for attempt in range(self.MAX_RETRIES + 1):
             try:
                 async with httpx.AsyncClient(timeout=45.0) as client:
                     resp = await client.post(
@@ -322,50 +323,37 @@ Scope:
                             }
                         }
                     )
-                    
+
                     if resp.status_code != 200:
-                        if attempt < max_retries:
-                            import asyncio
-                            await asyncio.sleep(1)
-                            continue
-                        return WardenVerdict(
-                            verdict=Verdict.FLAG,
-                            reason="LLM judge unavailable - failing closed",
-                            action=action, evaluator="llm_fallback"
+                        last_error_reason = (
+                            "LLM judge unavailable - failing closed"
                         )
-                    
-                    content = resp.json().get('message', {}).get('content', '')
-                    if not content or not content.strip():
-                        if attempt < max_retries:
-                            import asyncio
-                            await asyncio.sleep(1)
-                            continue
-                        return WardenVerdict(
-                            verdict=Verdict.FLAG,
-                            reason="LLM returned empty response - failing closed",
-                            action=action, evaluator="llm_fallback"
+                    elif not (content := resp.json()
+                              .get('message', {}).get('content', '').strip()):
+                        last_error_reason = (
+                            "LLM returned empty response - failing closed"
                         )
-                    
-                    parsed = json.loads(content)
-                    verdict = Verdict[parsed.get('verdict', 'FLAG')]
-                    
-                    return WardenVerdict(
-                        verdict=verdict,
-                        reason=parsed.get('reason', 'No reason'),
-                        action=action, evaluator="llm_judge",
-                        confidence=parsed.get('confidence', 0.5)
-                    )
-                        
+                    else:
+                        parsed = json.loads(content)
+                        verdict = Verdict[parsed.get('verdict', 'FLAG')]
+                        return WardenVerdict(
+                            verdict=verdict,
+                            reason=parsed.get('reason', 'No reason'),
+                            action=action, evaluator="llm_judge",
+                            confidence=parsed.get('confidence', 0.5)
+                        )
+
             except Exception as e:
-                if attempt < max_retries:
-                    import asyncio
-                    await asyncio.sleep(1)
-                    continue
-                return WardenVerdict(
-                    verdict=Verdict.FLAG,
-                    reason=f"LLM error, failing closed: {e}",
-                    action=action, evaluator="llm_fallback"
-                )
+                last_error_reason = f"LLM error, failing closed: {e}"
+
+            if attempt < self.MAX_RETRIES:
+                await asyncio.sleep(1)
+
+        return WardenVerdict(
+            verdict=Verdict.FLAG,
+            reason=last_error_reason,
+            action=action, evaluator="llm_fallback"
+        )
 
 
 # ════════════════════════════════════════════════════════════
