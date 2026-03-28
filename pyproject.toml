@@ -45,6 +45,7 @@ suy-forensic-report = "suy_sideguy.forensic_report:main"
 Homepage = "https://github.com/roli-lpci/suy-sideguy"
 Repository = "https://github.com/roli-lpci/suy-sideguy"
 "Bug Tracker" = "https://github.com/roli-lpci/suy-sideguy/issues"
+Changelog = "https://github.com/roli-lpci/suy-sideguy/blob/main/CHANGELOG.md"
 
 [tool.setuptools]
 packages = ["suy_sideguy"]
