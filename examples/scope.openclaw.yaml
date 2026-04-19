@@ -1,25 +1,21 @@
 agent:
-  name: "openclaw"
+  name: "my-agent"
   pid: null
 
 filesystem:
-  # NOTE: Paths below use macOS conventions (/Users/*/).
-  # On Linux, replace /Users/*/ with /home/*/ (e.g. /home/*/.openclaw/**).
   allowed_paths:
-    - "/Users/*/.openclaw/**"
-    - "/Users/*/Desktop/Coding/**"
-    - "/Users/*/Documents/projects/**"
-    - "/tmp/openclaw_*/**"
-    - "/tmp/openclaw/**"
+    - "~/agent-workspace/**"
+    - "~/projects/**"
+    - "/tmp/my-agent/**"
+    - "/tmp/my-agent_*/**"
 
   # Hard-kill invariants (near-zero FP)
-  # On Linux, replace /Users/*/ with /home/*/.
   forbidden_paths:
-    - "/Users/*/.ssh/**"
-    - "/Users/*/.gnupg/**"
-    - "/Users/*/.aws/**"
-    - "/Users/*/.config/gcloud/**"
-    - "/Users/*/.config/gh/**"
+    - "~/.ssh/**"
+    - "~/.gnupg/**"
+    - "~/.aws/**"
+    - "~/.config/gcloud/**"
+    - "~/.config/gh/**"
 
   forbidden_extensions:
     - ".pem"
@@ -56,7 +52,7 @@ network:
 
 process:
   allowed_commands:
-    - "openclaw"
+    - "my-agent"
     - "bash"
     - "sh"
     - "zsh"

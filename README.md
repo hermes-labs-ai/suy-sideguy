@@ -7,9 +7,36 @@
 [![GitHub stars](https://img.shields.io/github/stars/roli-lpci/suy-sideguy)](https://github.com/roli-lpci/suy-sideguy)
 [![CI](https://github.com/roli-lpci/suy-sideguy/actions/workflows/ci.yml/badge.svg)](https://github.com/roli-lpci/suy-sideguy/actions/workflows/ci.yml)
 
-Runtime safety guard for autonomous AI agents.
+Your agent can look fine at prompt time and still go off the rails once it starts touching files, processes, and the network.
 
-Suy Sideguy watches a running agent process and decides whether actions should be **SAFE**, **FLAGGED**, **HALTED**, or **KILLED** based on your policy.
+`suy-sideguy` watches a running agent process, scores observed behavior against policy, and can flag, halt, or kill dangerous runtime actions before they escalate.
+
+- "We need something that watches the agent after the prompt, not just before."
+- "I want to stop suspicious file or network behavior before it turns into damage."
+- "Audit logs are not enough if the process is already doing the wrong thing."
+- "We need incident-ready evidence when an agent crosses a policy boundary."
+
+```bash
+pip install suy-sideguy
+```
+
+```bash
+suy-warden --scope examples/scope.low-disruption.yaml --agent-pid 12345 --poll 0.5
+```
+
+```text
+target=12345 verdict=SAFE action=continue
+```
+
+**When To Use It**
+
+Use `suy-sideguy` when you run autonomous or semi-autonomous agents and need user-space runtime containment, policy enforcement, and forensic evidence.
+
+**When Not To Use It**
+
+Do not use `suy-sideguy` as kernel-level isolation, as a substitute for input-side prompt defenses, or as proof that one policy file covers every workload safely.
+
+![suy-sideguy preview](assets/preview.png)
 
 ---
 
@@ -26,15 +53,6 @@ Suy Sideguy watches a running agent process and decides whether actions should b
 - It is **not kernel-level enforcement** (it runs in userspace)
 - File visibility via `psutil.open_files()` is best-effort and OS-dependent
 - Network checks are based on observed remote IP/port; domain matching can be lossy after DNS
-
----
-
-## Relationship to Little Canary
-
-- **Little Canary** protects the **input side** (prompt-injection sensing)
-- **Suy Sideguy** protects the **runtime/output side** (containment + forensics)
-
-Use both for defense in depth.
 
 ---
 
@@ -67,15 +85,16 @@ Use one of:
 - Open `examples/scope.openclaw.yaml`
 - For staged rollout, start with `examples/scope.low-disruption.yaml`
 - Narrow allowlists to only what your workload truly needs
+- For a generic baseline, start with `examples/scope.generic.yaml`
 
 ### 3) Run the warden
 
 ```bash
 # Safer targeting: PID
-suy-warden --scope examples/scope.openclaw.yaml --agent-pid 12345 --poll 0.5
+suy-warden --scope examples/scope.generic.yaml --agent-pid 12345 --poll 0.5
 
 # Convenience targeting: process name
-suy-warden --scope examples/scope.openclaw.yaml --agent-name openclaw --poll 0.5
+suy-warden --scope examples/scope.generic.yaml --agent-name my-agent --poll 0.5
 ```
 
 ### 4) Generate report after a run
@@ -157,19 +176,6 @@ _Current status based on repository checks and CI configuration; not a formal se
 - ✅ CI workflow (`.github/workflows/ci.yml`)
 - ✅ Publish workflow (`.github/workflows/publish.yml`)
 - ✅ Security disclosure policy (`SECURITY.md`)
-
-## Hermes Labs Ecosystem
-
-suy-sideguy is part of the [Hermes Labs](https://hermes-labs.ai) open-source suite:
-
-- [**little-canary**](https://github.com/roli-lpci/little-canary) — Prompt injection detection
-- [**zer0dex**](https://github.com/roli-lpci/zer0dex) — Dual-layer memory for AI agents
-- [**forgetted**](https://github.com/roli-lpci/forgetted) — Selective memory governance
-- [**zer0lint**](https://github.com/roli-lpci/zer0lint) — mem0 extraction diagnostics
-- [**lintlang**](https://github.com/roli-lpci/lintlang) — Static linter for AI agent configs
-- [**quickthink**](https://github.com/roli-lpci/quickthink) — Planning scaffolding for local LLMs
-
----
 
 If suy-sideguy saves you time, please [star the repo](https://github.com/roli-lpci/suy-sideguy) — it helps others find it.
 

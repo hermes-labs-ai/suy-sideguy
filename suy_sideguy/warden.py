@@ -142,7 +142,7 @@ class Scope:
                 return True
             # Check if path is UNDER a pattern directory
             # Convert glob pattern to a prefix check:
-            # "/Users/*/.ssh" should match "/Users/bob/.ssh/id_rsa"
+            # A home-directory glob like "~/.ssh/**" should match concrete key paths.
             # Split pattern into parts and match each segment
             pat_parts = expanded.split(os.sep)
             path_parts = path.split(os.sep)

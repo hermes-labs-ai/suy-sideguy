@@ -22,6 +22,6 @@ htmlcov/
 .local/
 security/INCIDENT_REPORT_*.json
 
-# Internal review docs (not for public repo)
+# Local audit scratch files
 docs/internal/
 docs/SUYSIDEGUY_AUDIT_*.json

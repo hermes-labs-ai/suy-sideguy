@@ -6,7 +6,7 @@ body:
     id: description
     attributes:
       label: Description
-      description: A clear description of the bug.
+      description: A clear description of the bug. Do not paste secrets, API keys, private policy scopes, or sensitive forensic logs.
     validations:
       required: true
   - type: textarea

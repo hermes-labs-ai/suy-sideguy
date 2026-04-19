@@ -1,31 +1,22 @@
-# Suy Sideguy
+# suy-sideguy
 
-> Runtime safety guard for autonomous AI agents. Watches process, file, and network behavior, applies policy rules, and terminates severe violations with SIGKILL. Stores evidence for incident-ready forensic reports. Python 3.9+, Apache 2.0.
+Runtime policy guard for autonomous agent processes.
 
-## Docs
+Use this repo when you need to:
+- monitor process, file, and network behavior after an agent starts
+- classify runtime behavior into SAFE, FLAG, HALT, or KILL
+- generate forensic evidence after a policy incident
 
-- [README](https://github.com/roli-lpci/suy-sideguy/blob/main/README.md): Install, quickstart, rollout strategy, safety caveats, log locations
-- [CHANGELOG](https://github.com/roli-lpci/suy-sideguy/blob/main/CHANGELOG.md): Version history
-- [CONTRIBUTING](https://github.com/roli-lpci/suy-sideguy/blob/main/CONTRIBUTING.md): Development setup, PR guidelines
-- [Audit Checklist](https://github.com/roli-lpci/suy-sideguy/blob/main/docs/AUDIT_CHECKLIST.md): Promotion gate checks for deployment
-- [Implementation Plan](https://github.com/roli-lpci/suy-sideguy/blob/main/docs/IMPLEMENTATION_PLAN_LAYERED.md): Layered rollout roadmap
+Primary commands:
+- `suy-warden --scope examples/scope.low-disruption.yaml --agent-pid 12345 --poll 0.5`
+- `suy-forensic-report --last-hours 24`
 
-## Core Modules
+Outputs:
+- runtime verdicts
+- enforcement decisions
+- incident artifacts and forensic summaries
 
-- [Warden](https://github.com/roli-lpci/suy-sideguy/blob/main/suy_sideguy/warden.py): Main runtime loop — observe, evaluate, enforce
-- [Observer](https://github.com/roli-lpci/suy-sideguy/blob/main/suy_sideguy/observer.py): Process/file/network monitoring via psutil
-- [Policy](https://github.com/roli-lpci/suy-sideguy/blob/main/suy_sideguy/policy.py): Policy rule evaluation engine
-- [Scope](https://github.com/roli-lpci/suy-sideguy/blob/main/suy_sideguy/scope.py): YAML scope file parser (allowlists, blocklists, thresholds)
-- [Enforcement](https://github.com/roli-lpci/suy-sideguy/blob/main/suy_sideguy/enforcement.py): SIGKILL dispatch and enforcement actions
-- [Forensic Report](https://github.com/roli-lpci/suy-sideguy/blob/main/suy_sideguy/forensic_report.py): Evidence aggregation and incident report export
-- [Models](https://github.com/roli-lpci/suy-sideguy/blob/main/suy_sideguy/models.py): Shared data structures
-
-## Examples
-
-- [OpenClaw Scope](https://github.com/roli-lpci/suy-sideguy/blob/main/examples/scope.openclaw.yaml): Baseline policy for agent containment
-- [Low-Disruption Scope](https://github.com/roli-lpci/suy-sideguy/blob/main/examples/scope.low-disruption.yaml): Conservative rollout profile
-
-## Optional
-
-- [Security Policy](https://github.com/roli-lpci/suy-sideguy/blob/main/SECURITY.md): Vulnerability reporting
-- [Publish Checklist](https://github.com/roli-lpci/suy-sideguy/blob/main/PUBLISH_CHECKLIST.md): Release process
+Do not use this repo as:
+- a kernel sandbox
+- a prompt injection detector
+- a guarantee that one policy scope safely covers every deployment

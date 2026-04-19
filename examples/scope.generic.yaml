@@ -1,0 +1,21 @@
+mode: audit
+
+allow_read:
+  - "/workspace/**"
+  - "/tmp/**"
+
+deny_write:
+  - "~/.ssh/**"
+  - "~/.gnupg/**"
+  - "~/.aws/**"
+  - "~/.config/gcloud/**"
+  - "~/.config/gh/**"
+
+deny_exec:
+  - "curl"
+  - "wget"
+
+flag_threshold: 3
+flag_window: 60
+halt_threshold: 2
+

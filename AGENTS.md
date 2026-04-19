@@ -1,32 +1,41 @@
-# AGENTS.md — Quick Navigation for Human + AI Maintainers
+# AGENTS.md
 
-This file is a fast map for contributors and coding agents.
+`suy-sideguy` is a user-space runtime safety guard for agent processes.
 
-## Repo purpose
-Suy Sideguy is a runtime safety guard for autonomous agent processes.
+## Use it for
 
-## Start here
-- `README.md` — install, quickstart, rollout model
-- `examples/scope.openclaw.yaml` — baseline policy
-- `examples/scope.low-disruption.yaml` — safer staged rollout profile
-- `docs/IMPLEMENTATION_PLAN_LAYERED.md` — current roadmap/checklist
-- `docs/AUDIT_CHECKLIST.md` — promotion gate checks
+- watching process, file, and network behavior after the agent starts running
+- enforcing policy verdicts such as SAFE, FLAG, HALT, and KILL
+- generating forensic evidence after suspicious or blocked activity
 
-## Core code
-- `suy_sideguy/warden.py` — runtime observation/evaluation/enforcement loop
-- `suy_sideguy/forensic_report.py` — evidence aggregation and report export
+## Do not use it for
 
-## Testing and packaging
-- `tests/` — regression tests
-- `pyproject.toml` — package metadata + entry points
-- CI: `.github/workflows/ci.yml`
-- Publish: `.github/workflows/publish.yml`
+- kernel-level sandboxing
+- prompt injection detection on inbound input
+- assuming name-based process matching is safe enough for production targeting
 
-## Contract boundaries
-- Inbound prompt-defense belongs to Little Canary.
-- Runtime/output enforcement belongs to Suy Sideguy.
+## Minimal commands
 
-## Contribution expectations
-- Keep changes minimal and auditable.
-- Prefer policy/config additions before invasive enforcement changes.
-- Any kill-path change should include tests + forensic-output validation.
+```bash
+pip install -e ".[dev]"
+suy-warden --scope examples/scope.low-disruption.yaml --agent-pid 12345 --poll 0.5
+suy-forensic-report --last-hours 24
+pytest -q
+```
+
+## Output shape
+
+- the warden emits runtime verdicts and enforcement actions
+- forensic reporting reads stored incident artifacts and produces an incident-ready summary
+
+## Success means
+
+- the policy scope loads cleanly
+- the target process is identified correctly
+- runtime events are classified consistently and evidence is preserved
+
+## Common failure cases
+
+- using `--agent-name` when multiple matching processes exist
+- overly broad policies that create noisy early flags
+- expecting full OS visibility from `psutil.open_files()` on every platform
