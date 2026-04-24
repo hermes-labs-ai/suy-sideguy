@@ -1,40 +1,60 @@
-# Suy Sideguy
+# suy-sideguy
 
-[![PyPI version](https://img.shields.io/pypi/v/suy-sideguy)](https://pypi.org/project/suy-sideguy/)
-[![PyPI downloads](https://img.shields.io/pypi/dm/suy-sideguy)](https://pypi.org/project/suy-sideguy/)
-[![Python versions](https://img.shields.io/pypi/pyversions/suy-sideguy)](https://pypi.org/project/suy-sideguy/)
-[![License](https://img.shields.io/github/license/roli-lpci/suy-sideguy)](https://github.com/roli-lpci/suy-sideguy/blob/main/LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/roli-lpci/suy-sideguy)](https://github.com/roli-lpci/suy-sideguy)
-[![CI](https://github.com/roli-lpci/suy-sideguy/actions/workflows/ci.yml/badge.svg)](https://github.com/roli-lpci/suy-sideguy/actions/workflows/ci.yml)
+**Userspace runtime warden for autonomous agents.** Watches a running agent process, scores observed file / network / process behavior against a policy, and can flag, halt, or `SIGKILL` the agent before a dangerous action completes.
 
-Your agent can look fine at prompt time and still go off the rails once it starts touching files, processes, and the network.
+[![PyPI](https://img.shields.io/pypi/v/suy-sideguy)](https://pypi.org/project/suy-sideguy/)
+[![Python](https://img.shields.io/pypi/pyversions/suy-sideguy)](https://pypi.org/project/suy-sideguy/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![CI](https://github.com/hermes-labs-ai/suy-sideguy/actions/workflows/ci.yml/badge.svg)](https://github.com/hermes-labs-ai/suy-sideguy/actions/workflows/ci.yml)
+[![Hermes Seal](https://img.shields.io/badge/hermes--seal-manifest%20staged-blue)](https://github.com/hermes-labs-ai/suy-sideguy)
 
-`suy-sideguy` watches a running agent process, scores observed behavior against policy, and can flag, halt, or kill dangerous runtime actions before they escalate.
+If your prompt-side defenses pass, the policy is signed, the system prompt is locked — and your agent still touches `~/.ssh/`, opens 80 outbound connections in a minute, or `rm -rf`s outside `/tmp` — this is the warden that catches the action mid-flight and stops it.
 
-- "We need something that watches the agent after the prompt, not just before."
-- "I want to stop suspicious file or network behavior before it turns into damage."
-- "Audit logs are not enough if the process is already doing the wrong thing."
-- "We need incident-ready evidence when an agent crosses a policy boundary."
+## Pain
+
+- Static prompt audits passed; the agent went off the rails the moment it had a shell.
+- An LLM judge alone can't keep up with file-system events at process speed; you need the kernel's view, not the model's.
+- Forensic logs are only useful *after* the bad thing happened. You want a watcher that interrupts mid-action, not just records.
+- You want PID-targeted enforcement (not name matching), because name matching over-matches and you've been burned by it.
+- You're running an autonomous agent on real workloads and "we'll review the audit log next week" is not a containment strategy.
+
+## Install
 
 ```bash
 pip install suy-sideguy
 ```
 
+Python 3.9+.
+
+## Quick start
+
 ```bash
-suy-warden --scope examples/scope.low-disruption.yaml --agent-pid 12345 --poll 0.5
+suy-warden --scope examples/scope.generic.yaml --agent-pid 12345 --poll 0.5
 ```
+
+Live output while the agent runs:
 
 ```text
 target=12345 verdict=SAFE action=continue
+target=12345 verdict=FLAG action=log_continue  reason=high_fd_count
+target=12345 verdict=HALT action=freeze        reason=mass_deletion_3_in_10s
 ```
 
-**When To Use It**
+After a run:
 
-Use `suy-sideguy` when you run autonomous or semi-autonomous agents and need user-space runtime containment, policy enforcement, and forensic evidence.
+```bash
+suy-forensic-report --last-hours 24
+```
 
-**When Not To Use It**
+## When to use it
 
-Do not use `suy-sideguy` as kernel-level isolation, as a substitute for input-side prompt defenses, or as proof that one policy file covers every workload safely.
+Use `suy-sideguy` when you run autonomous or semi-autonomous agents and need *userspace* runtime containment, policy enforcement, and forensic evidence — as one layer in a defense-in-depth setup.
+
+## When not to use it
+
+- Not a kernel-level sandbox. If your threat model requires kernel isolation, use a kernel sandbox.
+- Not a substitute for input-side prompt-injection defenses.
+- Not proof that any single policy file covers every workload safely. Policies need calibration on each workload.
 
 ![suy-sideguy preview](assets/preview.png)
 
@@ -67,7 +87,7 @@ Requires Python 3.9+.
 For development:
 
 ```bash
-git clone https://github.com/roli-lpci/suy-sideguy.git
+git clone https://github.com/hermes-labs-ai/suy-sideguy.git
 cd suy-sideguy
 pip install -e ".[dev]"
 ```
