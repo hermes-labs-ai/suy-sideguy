@@ -1,6 +1,6 @@
 # suy-sideguy
 
-**Watch an agent process and SIGKILL it on policy violation.** Userspace warden that scores file, network, and subprocess behavior against a YAML policy and freezes or kills the agent before a dangerous action completes — no kernel module, no LLM judge in the hot path.
+**Watch an agent process and SIGKILL it on policy violation.** Userspace warden that scores file, network, and subprocess behavior against a YAML policy and stops the agent at the action that's about to break things — not the postmortem an hour later.
 
 [![PyPI](https://img.shields.io/pypi/v/suy-sideguy)](https://pypi.org/project/suy-sideguy/)
 [![Python](https://img.shields.io/pypi/pyversions/suy-sideguy)](https://pypi.org/project/suy-sideguy/)
@@ -8,15 +8,15 @@
 [![CI](https://github.com/hermes-labs-ai/suy-sideguy/actions/workflows/ci.yml/badge.svg)](https://github.com/hermes-labs-ai/suy-sideguy/actions/workflows/ci.yml)
 [![Hermes Seal](https://img.shields.io/badge/hermes--seal-manifest%20staged-blue)](https://github.com/hermes-labs-ai/suy-sideguy)
 
-If your agent passed every static check and then deleted 40 files in 8 seconds — this is the watcher that would have stopped it at file 4.
+If your agent passed every static check and then deleted 40 files in 8 seconds, this is the watcher that would have stopped it at file 4. The static gate was never going to catch a runtime decision.
 
 ## Pain
 
-- Your agent did `rm -rf` outside `/tmp` at 2am and you found out from the morning standup.
-- You wanted to "just read the audit log" — except the agent already read `~/.ssh/id_rsa` 200ms after the suspicious command, and the log was written *after* the read completed.
-- You tried `--agent-name my-agent` once; it matched 3 unrelated processes and one of them was your editor.
-- You stacked an LLM judge in front of every shell call and the latency was 800ms per action; the agent now runs at one-tenth the speed and you're paying for two model calls per command.
-- You have a "policy YAML" but it's an aspirational doc, not something a process is enforcing in real time.
+- Your agent ran `rm -rf` outside `/tmp` at 2am and you found out from the morning standup. The audit log was perfect; it just wasn't going to wake anyone up.
+- You added an LLM judge in front of every shell call. It's 800ms per action, doubles your cost, and still missed the 200ms read of `~/.ssh/id_rsa` because the judge isn't on the file-system event path.
+- You tried `--agent-name my-agent` once. It matched three unrelated processes including your editor. PID-target your enforcement or don't bother.
+- Your "policy YAML" is an aspirational doc, not something a process is enforcing. A policy without an enforcer is a memo.
+- You're treating runtime safety as a layer you'll add "after MVP." MVP shipped; the agent has shell access; the layer didn't.
 
 ## Install
 
