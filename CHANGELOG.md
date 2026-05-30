@@ -51,6 +51,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Security disclosure policy (`SECURITY.md`)
 - Contributing guide and Code of Conduct
 
-[0.1.2]: https://github.com/roli-lpci/suy-sideguy/compare/v0.1.1...v0.1.2
-[0.1.1]: https://github.com/roli-lpci/suy-sideguy/compare/v0.1.0...v0.1.1
-[0.1.0]: https://github.com/roli-lpci/suy-sideguy/releases/tag/v0.1.0
+[0.1.2]: https://github.com/hermes-labs-ai/suy-sideguy/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/hermes-labs-ai/suy-sideguy/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/hermes-labs-ai/suy-sideguy/releases/tag/v0.1.0

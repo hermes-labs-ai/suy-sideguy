@@ -1,10 +1,12 @@
 # suy-sideguy
 
+suy-sideguy is a runtime policy guard for autonomous AI agents that enforces kill/flag policy on a live agent process and emits a forensic report of what it actually did.
+
 **Watch an agent process and SIGKILL it on policy violation.** Userspace warden that scores file, network, and subprocess behavior against a YAML policy and stops the agent at the action that's about to break things — not the postmortem an hour later.
 
 [![PyPI](https://img.shields.io/pypi/v/suy-sideguy)](https://pypi.org/project/suy-sideguy/)
 [![Python](https://img.shields.io/pypi/pyversions/suy-sideguy)](https://pypi.org/project/suy-sideguy/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-green.svg)](LICENSE)
 [![CI](https://github.com/hermes-labs-ai/suy-sideguy/actions/workflows/ci.yml/badge.svg)](https://github.com/hermes-labs-ai/suy-sideguy/actions/workflows/ci.yml)
 [![Hermes Seal](https://img.shields.io/badge/hermes--seal-manifest%20staged-blue)](https://github.com/hermes-labs-ai/suy-sideguy)
 
@@ -203,34 +205,7 @@ If suy-sideguy saves you time, please [star the repo](https://github.com/hermes-
 
 ## About Hermes Labs
 
-[Hermes Labs](https://hermes-labs.ai) builds AI audit infrastructure for enterprise AI systems — EU AI Act readiness, ISO 42001 evidence bundles, continuous compliance monitoring, agent-level risk testing. We work with teams shipping AI into regulated environments.
-
-**Our OSS philosophy — read this if you're deciding whether to depend on us:**
-
-- **Everything we release is free, forever.** MIT or Apache-2.0. No "open core," no SaaS tier upsell, no paid version with the features you actually need. You can run this repo commercially, without talking to us.
-- **We open-source our own infrastructure.** The tools we release are what Hermes Labs uses internally — we don't publish demo code, we publish production code.
-- **We sell audit work, not licenses.** If you want an ANNEX-IV pack, an ISO 42001 evidence bundle, gap analysis against the EU AI Act, or agent-level red-teaming delivered as a report, that's at [hermes-labs.ai](https://hermes-labs.ai). If you just want the code to run it yourself, it's right here.
-
-**The Hermes Labs OSS audit stack** (public, open-source, no SaaS):
-
-**Static audit** (before deployment)
-- [**lintlang**](https://github.com/hermes-labs-ai/lintlang) — Static linter for AI agent configs, tool descriptions, system prompts. `pip install lintlang`
-- [**rule-audit**](https://github.com/hermes-labs-ai/rule-audit) — Static prompt audit — contradictions, coverage gaps, priority ambiguities
-- [**scaffold-lint**](https://github.com/hermes-labs-ai/scaffold-lint) — Scaffold budget + technique stacking. `pip install scaffold-lint`
-- [**intent-verify**](https://github.com/hermes-labs-ai/intent-verify) — Repo intent verification + spec-drift checks
-
-**Runtime observability** (while the agent runs)
-- [**little-canary**](https://github.com/hermes-labs-ai/little-canary) — Prompt injection detection via sacrificial canary-model probes
-- [**colony-probe**](https://github.com/hermes-labs-ai/colony-probe) — Prompt confidentiality audit — detects system-prompt reconstruction
-
-**Regression & scoring** (to prove what changed)
-- [**hermes-jailbench**](https://github.com/hermes-labs-ai/hermes-jailbench) — Jailbreak regression benchmark. `pip install hermes-jailbench`
-- [**agent-convergence-scorer**](https://github.com/hermes-labs-ai/agent-convergence-scorer) — Score how similar N agent outputs are. `pip install agent-convergence-scorer`
-
-**Supporting infra**
-- [**claude-router**](https://github.com/hermes-labs-ai/claude-router) · [**zer0dex**](https://github.com/hermes-labs-ai/zer0dex) · [**forgetted**](https://github.com/hermes-labs-ai/forgetted) · [**quick-gate-python**](https://github.com/hermes-labs-ai/quick-gate-python) · [**quick-gate-js**](https://github.com/hermes-labs-ai/quick-gate-js) · [**repo-audit**](https://github.com/hermes-labs-ai/repo-audit)
-
-Natural pairing: suy-sideguy is the runtime-containment chapter. Pair with lintlang (pre-deployment static gate) and little-canary (input-side injection detection) for defense in depth.
+Hermes Labs is an independent AI-reliability lab building open-source tools that catch silent failure modes in production AI. More at [hermes-labs.ai](https://hermes-labs.ai).
 
 ---
 
