@@ -3,7 +3,11 @@
   "description": "suy-sideguy is a runtime policy guard for autonomous AI agents: it enforces kill/flag policy on a live agent process and produces a forensic report of what the agent actually did, judging the agent by its behavior rather than its configuration.",
   "upload_type": "software",
   "creators": [
-    { "name": "Bosch Rodriguez, Rolando", "orcid": "0009-0005-4896-1112", "affiliation": "Hermes Labs" }
+    {
+      "name": "Bosch Rodriguez, Rolando",
+      "orcid": "0009-0005-4896-1112",
+      "affiliation": "Hermes Labs"
+    }
   ],
   "keywords": [
     "AI reliability",
